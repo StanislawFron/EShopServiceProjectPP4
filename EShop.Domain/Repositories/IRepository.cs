@@ -10,6 +10,6 @@ namespace EShop.Domain.Repositories
         Task<Product> UpdateProductAsync(Product user);
         Task<List<Product>> GetAllProductAsync();
         #endregion
-
+        Task<Product> DeleteProductAsync(int id);
     }
 }
