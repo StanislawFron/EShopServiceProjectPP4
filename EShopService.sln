@@ -31,10 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Domain", "User.Domain\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Application", "User.Application\User.Application.csproj", "{13D9F981-2150-4862-BEC1-F45E8E827228}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notification", "Notification", "{311B53AC-A0C9-477C-90C6-1B63BA30624C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "NotificationService\NotificationService.csproj", "{69D8CE4C-A962-45C3-921F-8CB49067D5A5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShoppingCart", "ShoppingCart", "{0676D5F1-AEBD-4B89-9BA6-DD0552A54D5B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart", "ShoppingCart\ShoppingCart.csproj", "{81735B1B-E7A7-4022-B06F-D733A204661C}"
