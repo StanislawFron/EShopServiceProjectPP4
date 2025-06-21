@@ -8,6 +8,8 @@ namespace EShop.Application.Service
         Task<Product> GetAsync(int id);
         Task<Product> UpdateAsync(Product product);
         Task<Product> AddAsync(Product product);
+        
+        Task<Product> DeleteAsync(int id);
         Product Add(Product product);
     }
 }
