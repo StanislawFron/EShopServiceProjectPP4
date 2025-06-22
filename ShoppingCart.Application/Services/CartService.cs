@@ -13,11 +13,26 @@ namespace ShoppingCart.Application.Services
             _repository = repository;
         }
 
-        public void AddProductToCart(int cartId, Product product)
+        public void AddProductToCart(int cartId, int productId)
         {
-            var cart = _repository.FindById(cartId) ?? new Cart { Id = cartId };
-            cart.Products.Add(product);
-            _repository.Add(cart);
+            var cart = _repository.FindById(cartId);
+            if (cart == null)
+            {
+                cart = new Cart { Id = cartId, UserId = Guid.NewGuid() }; // Tymczasowo, UserId powinien przychodzić z tokenu JWT
+                _repository.Add(cart);
+            }
+
+            var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
+            if (cartItem == null)
+            {
+                cart.Items.Add(new CartItem { ProductId = productId, Quantity = 1 });
+            }
+            else
+            {
+                cartItem.Quantity++;
+            }
+            _repository.Update(cart);
         }
 
         public void RemoveProductFromCart(int cartId, int productId)
@@ -25,10 +40,10 @@ namespace ShoppingCart.Application.Services
             var cart = _repository.FindById(cartId);
             if (cart != null)
             {
-                var product = cart.Products.FirstOrDefault(p => p.Id == productId);
-                if (product != null)
+                var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+                if (cartItem != null)
                 {
-                    cart.Products.Remove(product);
+                    cart.Items.Remove(cartItem);
                     _repository.Update(cart);
                 }
             }
@@ -36,30 +51,12 @@ namespace ShoppingCart.Application.Services
 
         public Cart GetCart(int cartId)
         {
-            var cart = _repository.FindById(cartId);
-            if (cart == null) return null;
-
-            return new Cart
-            {
-                Id = cart.Id,
-                Products = cart.Products.Select(p => new Product
-                {
-                    Id = p.Id
-                }).ToList()
-            };
+            return _repository.FindById(cartId);
         }
 
         public List<Cart> GetAllCarts()
         {
-            return _repository.GetAll().Select(c => new Cart
-            {
-                Id = c.Id,
-                Products = c.Products.Select(p => new Product
-                {
-                    Id = p.Id
-                }).ToList()
-            }).ToList();
+            return _repository.GetAll();
         }
     }
-
 }
