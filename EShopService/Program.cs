@@ -20,13 +20,15 @@ namespace EShopService
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(connectionString,
-                    sqlOptions => sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory_EShop")),
-                ServiceLifetime.Transient);
+                options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+
+               
+
             builder.Services.AddScoped<IRepository, Repository>();
 
             builder.Services.AddScoped<ICreditCardService, CreditCardService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
 
             builder.Services.AddControllers();

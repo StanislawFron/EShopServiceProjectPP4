@@ -174,7 +174,7 @@ namespace EShopService.IntegrationTests.Controllers
                 dbContext.SaveChanges();
 
                 // Act
-                var category = new Category
+                var category = new ProductCategory
                 {
                     Name = "test"
                 };

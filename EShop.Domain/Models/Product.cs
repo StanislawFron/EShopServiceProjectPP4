@@ -14,6 +14,6 @@
 
        
 
-        public Category Category { get; set; } = default!;
+        public ProductCategory Category { get; set; } = default!;
     }
 }
