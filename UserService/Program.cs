@@ -27,34 +27,36 @@ builder.Services.AddDbContext<User.Domain.Repositories.DataContext>(options =>
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder.Services.Configure<JwtSettings>(jwtSettings);
 
-// builder.Services.AddAuthentication(options =>
-// {
-//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-// })
-// .AddJwtBearer(options =>
-// {
-//     var rsa = RSA.Create();
-//     rsa.ImportFromPem(File.ReadAllText("/app/data/public.key"));
-//     var publicKey = new RsaSecurityKey(rsa);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var rsa = RSA.Create();
+    rsa.ImportFromPem(File.ReadAllText("/app/data/public.key"));
+    var publicKey = new RsaSecurityKey(rsa);
 
-//     var jwtConfig = jwtSettings.Get<JwtSettings>();
-//     options.TokenValidationParameters = new TokenValidationParameters
-//     {
-//         ValidateIssuer = true,
-//         ValidateAudience = true,
-//         ValidateLifetime = true,
-//         ValidateIssuerSigningKey = true,
-//         ValidIssuer = jwtConfig.Issuer,
-//         ValidAudience = jwtConfig.Audience,
-//         IssuerSigningKey = publicKey
-//     };
-// });
+    var jwtConfig = jwtSettings.Get<JwtSettings>();
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtConfig.Issuer,
+        ValidAudience = jwtConfig.Audience,
+        IssuerSigningKey = publicKey
+    };
+});
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("Administrator"));
+        policy.RequireRole("Admin"));
+    options.AddPolicy("UserOnly", policy =>
+        policy.RequireRole("Użytkownik"));
 });
 
 builder.Services.AddScoped<ILoginService, LoginService>();
@@ -116,8 +118,8 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Uruchom migracje i seeder
 using (var scope = app.Services.CreateScope())

@@ -194,6 +194,33 @@ namespace User.Application.Services
 
             await _context.Clients.AddRangeAsync(clients);
             await _context.SaveChangesAsync();
+
+            // Dodaj role jeśli nie istnieją
+            var adminRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+            if (adminRole == null)
+            {
+                adminRole = new Role { Name = "Admin" };
+                _context.Roles.Add(adminRole);
+            }
+            var userRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Użytkownik");
+            if (userRole == null)
+            {
+                userRole = new Role { Name = "Użytkownik" };
+                _context.Roles.Add(userRole);
+            }
+            await _context.SaveChangesAsync();
+
+            // Przypisz rolę Admin użytkownikowi o id 1
+            var user1 = await _context.Users.FirstOrDefaultAsync(u => u.Id == 1);
+            if (user1 != null)
+            {
+                if (user1.Roles == null)
+                    user1.Roles = new List<Role>();
+                if (!user1.Roles.Any(r => r.Name == "Admin"))
+                    user1.Roles.Add(adminRole);
+                _context.Users.Update(user1);
+                await _context.SaveChangesAsync();
+            }
         }
 
         private string HashPassword(string password)
