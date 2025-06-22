@@ -1,31 +1,49 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
+# Existing configuration - LEAVE UNCHANGED
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["EShopService/EShopService.csproj", "EShopService/"]
 RUN dotnet restore "./EShopService/EShopService.csproj"
 COPY . .
-# COPY ./data/public.key /app/data/public.key
 WORKDIR "/src/EShopService"
 RUN dotnet build "./EShopService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./EShopService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "EShopService.dll"]
+
+# ============= ADD THIS DEVELOPMENT STAGE =============
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS development
+USER root
+
+# Konfiguracja użytkownika developerskiego
+ARG USER_UID=1000
+ARG USER_GID=1000
+RUN groupadd -g $USER_GID developer && \
+    useradd -m -u $USER_UID -g $USER_GID developer && \
+    mkdir -p /home/developer/.nuget/packages && \
+    chown -R developer:developer /home/developer
+
+# Środowisko developerskie
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://*:8080
+
+WORKDIR /workspace/EShopService
+USER developer
+
+# Instalacja narzędzi developerskich
+RUN dotnet tool install --global dotnet-watch
+
+ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile"]

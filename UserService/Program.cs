@@ -7,10 +7,22 @@ using User.Application.Producer;
 using User.Application.Services;
 using User.Domain.Models.JWT;
 using User.Domain.Profiles;
+using User.Domain.Models.Entities;
+using EShop.Domain.Repositories;
+using User.Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<EShop.Domain.Repositories.DbContext>(x => x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
 
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+builder.Services.AddDbContext<User.Domain.Repositories.DataContext>(options =>
+    options.UseSqlServer(connectionString, b =>
+    {
+        b.MigrationsAssembly("User.Domain");
+        b.MigrationsHistoryTable("__EFMigrationsHistory_User");
+    }));
+
+// builder.Services.AddScoped<IRepository, Repository>();
 // JWT config
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder.Services.Configure<JwtSettings>(jwtSettings);
@@ -49,6 +61,8 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IUserService, User.Application.Services.UserService>();
 builder.Services.AddScoped<IKafkaProducer, KafkaProducer>();
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IClientSeeder, ClientSeeder>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -105,6 +119,15 @@ if (app.Environment.IsDevelopment())
 // app.UseAuthentication();
 // app.UseAuthorization();
 
+// Uruchom migracje i seeder
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<User.Domain.Repositories.DataContext>();
+    await dbContext.Database.MigrateAsync();
+
+    var clientSeeder = scope.ServiceProvider.GetRequiredService<IClientSeeder>();
+    await clientSeeder.SeedClientsAsync();
+}
 
 app.MapControllers();
 

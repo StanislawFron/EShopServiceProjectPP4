@@ -19,16 +19,17 @@ namespace EShopService
 
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
-
-            //builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
+               
 
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null
+                )
+            ), ServiceLifetime.Transient);
             builder.Services.AddScoped<IRepository, Repository>();
 
-
-            // Add services to the container.
             builder.Services.AddScoped<ICreditCardService, CreditCardService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();

@@ -1,0 +1,13 @@
+{
+  "name": "eShop Dev",
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "eshopservice",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "developer",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-dotnettools.csharp"]
+    }
+  }
+}

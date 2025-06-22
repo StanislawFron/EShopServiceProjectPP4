@@ -1,36 +1,51 @@
+version: '3.8'
+
 services:
   eshopservice:
-    image: ${DOCKER_REGISTRY-}eshopservice
-    depends_on:
-      - db
-      - userservice
-    environment:
-      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
     build:
       context: .
       dockerfile: EShopService/Dockerfile
-
-  userservice:
-    image: ${DOCKER_REGISTRY-}userservice
-    depends_on:
-      - db
+      target: development
+    volumes:
+      - .:/workspace
+    ports:
+      - "8080:8080"
     environment:
       - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    depends_on:
+      - db
+      - userservice
+
+  userservice:
     build:
       context: .
       dockerfile: UserService/Dockerfile
-
-  shoppingcartserivce:
-    image: ${DOCKER_REGISTRY-}shoppingcartserivce
-    depends_on:
-      - db
-      - kafka
+      target: development
+    volumes:
+      - .:/workspace
+    ports:
+      - "8081:8081"
     environment:
       - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    depends_on:
+      - db
+
+  shoppingcartservice:
     build:
       context: .
       dockerfile: ShoppingCart/Dockerfile
-      
+      target: development
+    volumes:
+      - .:/workspace
+    ports:
+      - "8082:8082"
+    environment:
+        - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    depends_on:
+      - db
+      - redis
+      - kafka
+
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
