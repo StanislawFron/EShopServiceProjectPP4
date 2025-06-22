@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -40,6 +39,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.Infrastructure", "ShoppingCart.Infrastructure\ShoppingCart.Infrastructure.csproj", "{13375205-034D-448E-82A3-1D3252F0B8FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.Application", "ShoppingCart.Application\ShoppingCart.Application.csproj", "{FD4625C2-54B2-403B-9EA4-68FE173AC3BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Application.Tests", "User.Application.Tests\User.Application.Tests.csproj", "{3A94B79F-017D-4E13-9A53-004DC9673DDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +112,10 @@ Global
 		{FD4625C2-54B2-403B-9EA4-68FE173AC3BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD4625C2-54B2-403B-9EA4-68FE173AC3BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD4625C2-54B2-403B-9EA4-68FE173AC3BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A94B79F-017D-4E13-9A53-004DC9673DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A94B79F-017D-4E13-9A53-004DC9673DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A94B79F-017D-4E13-9A53-004DC9673DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A94B79F-017D-4E13-9A53-004DC9673DDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,7 +132,6 @@ Global
 		{4B2BF863-4E9A-4F87-9FC9-AF37D3F34573} = {2641E901-8C81-419E-BA64-EDCCA2193C44}
 		{88DBCC45-BC15-47C4-832A-1FC620103218} = {2641E901-8C81-419E-BA64-EDCCA2193C44}
 		{13D9F981-2150-4862-BEC1-F45E8E827228} = {2641E901-8C81-419E-BA64-EDCCA2193C44}
-		{69D8CE4C-A962-45C3-921F-8CB49067D5A5} = {311B53AC-A0C9-477C-90C6-1B63BA30624C}
 		{81735B1B-E7A7-4022-B06F-D733A204661C} = {0676D5F1-AEBD-4B89-9BA6-DD0552A54D5B}
 		{36BE5986-2C21-49A2-B6CC-7376350ACC2A} = {0676D5F1-AEBD-4B89-9BA6-DD0552A54D5B}
 		{13375205-034D-448E-82A3-1D3252F0B8FD} = {0676D5F1-AEBD-4B89-9BA6-DD0552A54D5B}
