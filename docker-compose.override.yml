@@ -12,12 +12,7 @@ services:
       - ASPNETCORE_URLS=http://+:8070
     ports:
       - "8070:8070"
-
-  notificationserivce:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8050
-
+      
   shoppingcartserivce:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development

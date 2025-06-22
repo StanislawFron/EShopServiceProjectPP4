@@ -1,65 +1,129 @@
-﻿using ShoppingCart.Domain.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Domain.Models;
-using ShoppingCart.Infrastructure.Repositories;
+using ShoppingCart.Domain.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ShoppingCart.Application.Services
 {
-    public class CartService : ICartAdder, ICartRemover, ICartReader
+    public class CartService : ICartService
     {
-        private readonly ICartRepository _repository;
+        private readonly DataContext _context;
 
-        public CartService(ICartRepository repository)
+        public CartService(DataContext context)
         {
-            _repository = repository;
+            _context = context;
         }
 
-        public void AddProductToCart(int cartId, Product product)
+        public async Task<Cart> CreateCartAsync(int userId)
         {
-            var cart = _repository.FindById(cartId) ?? new Cart { Id = cartId };
-            cart.Products.Add(product);
-            _repository.Add(cart);
-        }
-
-        public void RemoveProductFromCart(int cartId, int productId)
-        {
-            var cart = _repository.FindById(cartId);
-            if (cart != null)
+            var existingCart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (existingCart != null)
             {
-                var product = cart.Products.FirstOrDefault(p => p.Id == productId);
-                if (product != null)
+                throw new InvalidOperationException($"Cart for user {userId} already exists.");
+            }
+
+            var cart = new Cart
+            {
+                UserId = userId
+            };
+
+            _context.Carts.Add(cart);
+            await _context.SaveChangesAsync();
+            return cart;
+        }
+
+        public async Task<bool> DeleteCartAsync(int cartId)
+        {
+            var cart = await _context.Carts.FindAsync(cartId);
+            if (cart == null)
+            {
+                return false;
+            }
+
+            _context.Carts.Remove(cart);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task AddProductToCartAsync(int cartId, int productId, int quantity)
+        {
+            var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId);
+            if (cart == null)
+            {
+                // Optionally create a cart if it doesn't exist, for now, we throw an exception
+                throw new KeyNotFoundException($"Cart with ID {cartId} not found.");
+            }
+
+            var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
+            if (cartItem == null)
+            {
+                cart.Items.Add(new CartItem { ProductId = productId, Quantity = quantity });
+            }
+            else
+            {
+                cartItem.Quantity += quantity;
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveProductFromCartAsync(int cartId, int productId, int quantity)
+        {
+            var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == cartId);
+            if (cart == null)
+            {
+                throw new KeyNotFoundException($"Cart with ID {cartId} not found.");
+            }
+            
+            var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (cartItem != null)
+            {
+                cartItem.Quantity -= quantity;
+                if (cartItem.Quantity <= 0)
                 {
-                    cart.Products.Remove(product);
-                    _repository.Update(cart);
+                    cart.Items.Remove(cartItem);
                 }
             }
+            await _context.SaveChangesAsync();
         }
 
-        public Cart GetCart(int cartId)
+        public async Task<bool> RemoveItemFromCartAsync(int cartItemId)
         {
-            var cart = _repository.FindById(cartId);
-            if (cart == null) return null;
-
-            return new Cart
+            var cartItem = await _context.CartItems.FindAsync(cartItemId);
+            if (cartItem == null)
             {
-                Id = cart.Id,
-                Products = cart.Products.Select(p => new Product
-                {
-                    Id = p.Id
-                }).ToList()
-            };
+                return false;
+            }
+
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public List<Cart> GetAllCarts()
+        public async Task<Cart> GetCartAsync(int cartId)
         {
-            return _repository.GetAll().Select(c => new Cart
-            {
-                Id = c.Id,
-                Products = c.Products.Select(p => new Product
-                {
-                    Id = p.Id
-                }).ToList()
-            }).ToList();
+            return await _context.Carts.FirstOrDefaultAsync(c => c.Id == cartId);
+        }
+
+        public async Task<IEnumerable<CartItem>> GetCartItemsAsync(int cartId)
+        {
+            return await _context.CartItems
+                .Where(ci => ci.CartId == cartId)
+                .ToListAsync();
+        }
+
+        public async Task<CartItem> GetCartItemAsync(int cartId, int cartItemId)
+        {
+            return await _context.CartItems
+                .FirstOrDefaultAsync(ci => ci.CartId == cartId && ci.Id == cartItemId);
+        }
+
+        public async Task<IEnumerable<Cart>> GetAllCartsAsync()
+        {
+            return await _context.Carts.Include(c => c.Items).ToListAsync();
         }
     }
-
 }

@@ -41,7 +41,6 @@ namespace EShopService.Controllers
 
         // POST api/<ProductController>
         [HttpPost]
-        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> Post([FromBody]Product product)
         {
             var result = await _productService.AddAsync(product);
@@ -51,7 +50,6 @@ namespace EShopService.Controllers
 
         // PUT api/<ProductController>/5
         [HttpPut("{id}")]
-        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> Put(int id, [FromBody]Product product)
         {
             var result = await _productService.UpdateAsync(product);
@@ -61,7 +59,6 @@ namespace EShopService.Controllers
 
         // DELETE api/<ProductController>/5
         [HttpDelete("{id}")]
-        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> Delete(int id)
         {
             var product = await _productService.GetAsync(id);
@@ -71,12 +68,23 @@ namespace EShopService.Controllers
             return Ok(result);
         }
 
-        [HttpPatch]
-        [Authorize(Policy = "AdminOnly")]
-        public ActionResult Add([FromBody] Product product)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] Product product)
         {
-            var result = _productService.Add(product);
+            var existing = await _productService.GetAsync(id);
+            if (existing == null) return NotFound();
 
+            if (!string.IsNullOrEmpty(product.Name))
+                existing.Name = product.Name;
+            if (product.Price != default)
+                existing.Price = product.Price;
+            if (product.Category != null)
+                existing.Category = product.Category;
+            existing.Deleted = product.Deleted;
+            existing.UpdatedAt = product.UpdatedAt != default ? product.UpdatedAt : DateTime.UtcNow;
+            existing.UpdatedBy = product.UpdatedBy;
+
+            var result = await _productService.UpdateAsync(existing);
             return Ok(result);
         }
     }

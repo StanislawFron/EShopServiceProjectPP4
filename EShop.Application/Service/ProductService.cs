@@ -62,6 +62,17 @@ namespace EShop.Application.Service
             return result;
         }
 
+
+        public async Task<Product> DeleteAsync(int id)
+        {
+            var result = await _repository.DeleteProductAsync(id);
+
+            string key = $"Product:{id}";
+            await _redisDb.KeyDeleteAsync(key);
+
+            return result;
+        }
+
         public Product Add(Product product)
         {
             var result = _repository.AddProductAsync(product).Result;

@@ -56,8 +56,8 @@ namespace EShopService.IntegrationTests.Controllers
 
                 // Stworzenie obiektu
                 dbContext.Products.AddRange(
-                    new Product { Name = "Product1" },
-                    new Product { Name = "Product2" }
+                    new Product { Name = "Product1", CreatedBy = 1, UpdatedBy = 1 },
+                    new Product { Name = "Product2", CreatedBy = 1, UpdatedBy = 1 }
                 );
                 // Zapisanie obiektu
                 await dbContext.SaveChangesAsync();
@@ -97,7 +97,7 @@ namespace EShopService.IntegrationTests.Controllers
                             // Pobranie kontekstu bazy danych
                             var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
                             {
-                                dbContext.Products.Add(new Product { Name = "Product" + index });
+                                dbContext.Products.Add(new Product { Name = "Product" + index, CreatedBy = 1, UpdatedBy = 1 });
                                 dbContext.SaveChanges();
                             }
                         }
@@ -141,7 +141,7 @@ namespace EShopService.IntegrationTests.Controllers
                         // Pobranie kontekstu bazy danych
                         var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
                         {
-                            dbContext.Products.Add(new Product { Name = "Product" + index });
+                            dbContext.Products.Add(new Product { Name = "Product" + index, CreatedBy = 1, UpdatedBy = 1 });
                             await dbContext.SaveChangesAsync();
                         }
                     }
@@ -174,15 +174,19 @@ namespace EShopService.IntegrationTests.Controllers
                 dbContext.SaveChanges();
 
                 // Act
-                var category = new Category
+                var category = new ProductCategory
                 {
-                    Name = "test"
+                    Name = "test",
+                    CreatedBy = 1,
+                    UpdatedBy = 1
                 };
 
                 var product = new Product
                 {
                     Name = "Product",
-                    Category = category
+                    Category = category,
+                    CreatedBy = 1,
+                    UpdatedBy = 1
                 };
 
                 var json = JsonConvert.SerializeObject(product);

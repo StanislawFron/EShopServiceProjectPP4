@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  eshopservice:
+    build:
+      context: .
+      dockerfile: EShopService/Dockerfile
+      target: development
+    volumes:
+      - .:/workspace
+    ports:
+      - "8080:8080"
+    environment:
+      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    depends_on:
+      - db
+      - userservice
+    command: ["/wait-for-it.sh", "db:1433", "--", "dotnet", "EShopService.dll"]
+
+  userservice:
+    build:
+      context: .
+      dockerfile: UserService/Dockerfile
+      target: development
+    volumes:
+      - .:/workspace
+    ports:
+      - "8081:8081"
+    environment:
+      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    depends_on:
+      - db
+    command: ["/wait-for-it.sh", "db:1433", "--", "dotnet", "watch", "run", "--no-launch-profile"]
+
+  shoppingcartservice:
+    build:
+      context: .
+      dockerfile: ShoppingCart/Dockerfile
+      target: development
+    volumes:
+      - .:/workspace
+    ports:
+      - "8082:8082"
+    environment:
+        - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    depends_on:
+      - db
+      - redis
+      - kafka
+    command: ["/wait-for-it.sh", "db:1433", "--", "dotnet", "watch", "run", "--no-launch-profile"]
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "${SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+
+volumes:
+  mssql_data:

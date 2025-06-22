@@ -7,7 +7,6 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -15,8 +14,6 @@ WORKDIR /src
 COPY ["UserService/UserService.csproj", "UserService/"]
 RUN dotnet restore "./UserService/UserService.csproj"
 COPY . .
-# COPY ./data/private.key /app/data/private.key
-# COPY ./data/public.key /app/data/public.key
 WORKDIR "/src/UserService"
 RUN dotnet build "./UserService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
@@ -30,3 +27,28 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "UserService.dll"]
+
+# ============= ADD THIS DEVELOPMENT STAGE =============
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS development
+USER root
+RUN apt-get update && apt-get install -y curl
+
+ARG USER_UID=1000
+ARG USER_GID=1000
+RUN groupadd -g $USER_GID developer && \
+    useradd -m -u $USER_UID -g $USER_GID developer
+
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://*:8081
+
+WORKDIR /workspace/UserService
+USER developer
+
+RUN dotnet tool install --global dotnet-watch
+
+COPY ./data /workspace/data
+
+COPY wait-for-it.sh /wait-for-it.sh
+
+CMD ["dotnet", "watch", "run", "--no-launch-profile"]

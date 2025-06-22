@@ -1,5 +1,4 @@
 using EShop.Application.Service;
-using EShop.Application.Services;
 using EShop.Domain.Repositories;
 using EShop.Domain.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,16 +18,15 @@ namespace EShopService
 
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
-
-            //builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+
+               
+
             builder.Services.AddScoped<IRepository, Repository>();
 
-
-            // Add services to the container.
-            builder.Services.AddScoped<ICreditCardService, CreditCardService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
 
             builder.Services.AddControllers();
@@ -76,7 +74,7 @@ namespace EShopService
             // .AddJwtBearer(options =>
             // {
             //     var rsa = RSA.Create();
-            //     rsa.ImportFromPem(File.ReadAllText("/app/data/public.key"));
+            //     rsa.ImportFromPem(File.ReadAllText("/workspace/data/public.key"));
             //     var publicKey = new RsaSecurityKey(rsa);
 
             //     options.TokenValidationParameters = new TokenValidationParameters

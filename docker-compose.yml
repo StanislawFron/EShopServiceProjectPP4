@@ -20,17 +20,6 @@ services:
       context: .
       dockerfile: UserService/Dockerfile
 
-  notificationserivce:
-    image: ${DOCKER_REGISTRY-}notificationserivce
-    depends_on:
-      - db
-      - kafka
-    environment:
-      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
-    build:
-      context: .
-      dockerfile: NotificationService/Dockerfile
-
   shoppingcartserivce:
     image: ${DOCKER_REGISTRY-}shoppingcartserivce
     depends_on:
