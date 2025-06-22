@@ -6,8 +6,8 @@
         public string Name { get; set; } = default!;
         public string NIP { get; set; } = default!;
         public string PhoneNumber { get; set; } = default!;
-        public int AddressId { get; set; }
-        public Address Address { get; set; } = default!;
+        public int? AddressId { get; set; }
+        public Address? Address { get; set; } = default!;
         public int UserId { get; set; }
         public User User { get; set; } = default!;
     }

@@ -51,6 +51,21 @@ namespace EShopService.Controllers
             return success ? NoContent() : NotFound();
         }
 
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] ProductCategory category)
+        {
+            var existing = await _service.GetByIdAsync(id);
+            if (existing == null) return NotFound();
 
+            // Aktualizuj tylko przekazane pola
+            if (!string.IsNullOrEmpty(category.Name))
+                existing.Name = category.Name;
+            existing.Deleted = category.Deleted;
+            existing.UpdatedAt = category.UpdatedAt != default ? category.UpdatedAt : DateTime.UtcNow;
+            existing.UpdatedBy = category.UpdatedBy;
+
+            var success = await _service.UpdateAsync(existing);
+            return success ? NoContent() : NotFound();
+        }
     }    
 }

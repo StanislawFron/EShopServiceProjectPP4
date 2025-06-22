@@ -63,5 +63,16 @@ namespace UserService.Controllers
                 return NotFound();
             return NoContent();
         }
+
+        [HttpDelete("{id}/address")]
+        public async Task<IActionResult> DeleteAddressForClient(int id)
+        {
+            var result = await _clientService.DeleteAddressForClientAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
     }
 } 

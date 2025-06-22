@@ -14,8 +14,6 @@ WORKDIR /src
 COPY ["UserService/UserService.csproj", "UserService/"]
 RUN dotnet restore "./UserService/UserService.csproj"
 COPY . .
-# COPY ./data/private.key /app/data/private.key
-# COPY ./data/public.key /app/data/public.key
 WORKDIR "/src/UserService"
 RUN dotnet build "./UserService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
@@ -48,6 +46,8 @@ WORKDIR /workspace/UserService
 USER developer
 
 RUN dotnet tool install --global dotnet-watch
+
+COPY ./data /workspace/data
 
 COPY wait-for-it.sh /wait-for-it.sh
 

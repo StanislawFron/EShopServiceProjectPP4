@@ -11,5 +11,6 @@ namespace User.Application.Services
         Task<Address?> GetAddressForClientAsync(int clientId);
         Task<Address> UpdateAddressForClientAsync(int clientId, Address address);
         Task<bool> DeleteClientAsync(int id);
+        Task<bool> DeleteAddressForClientAsync(int clientId);
     }
 } 

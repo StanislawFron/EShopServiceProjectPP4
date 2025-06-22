@@ -78,5 +78,19 @@ namespace User.Application.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DeleteAddressForClientAsync(int clientId)
+        {
+            var client = await _context.Clients.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == clientId);
+            if (client?.Address == null)
+            {
+                return false;
+            }
+
+            _context.Addresses.Remove(client.Address);
+            client.Address = null;
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 } 
