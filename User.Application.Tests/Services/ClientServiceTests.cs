@@ -64,8 +64,8 @@ namespace User.Application.Tests.Services
             var dbContext = await GetDataContext();
             var testUser = new Domain.Models.Entities.User { Id = 1, Username = "testuser", Email = "test@test.com", PasswordHash = "hash" };
             dbContext.Users.Add(testUser);
-            var client1 = new Client { Name = "Client1", User = testUser, UserId = 1, Address = new Address() };
-            var client2 = new Client { Name = "Client2", User = testUser, UserId = 1, Address = new Address() };
+            var client1 = new Client { Name = "Client1", User = testUser, UserId = 1, Address = new Address(), NIP = "", PhoneNumber = "" };
+            var client2 = new Client { Name = "Client2", User = testUser, UserId = 1, Address = new Address(), NIP = "", PhoneNumber = "" };
             dbContext.Clients.AddRange(client1, client2);
             await dbContext.SaveChangesAsync();
 
@@ -87,7 +87,7 @@ namespace User.Application.Tests.Services
             var dbContext = await GetDataContext();
             var testUser = new Domain.Models.Entities.User { Id = 1, Username = "testuser", Email = "test@test.com", PasswordHash = "hash" };
             dbContext.Users.Add(testUser);
-            var client = new Client { Name = "Client1", User = testUser, UserId = 1, Address = new Address { City = "Old City" } };
+            var client = new Client { Name = "Client1", User = testUser, UserId = 1, Address = new Address { City = "Old City" }, NIP = "", PhoneNumber = "" };
             dbContext.Clients.Add(client);
             await dbContext.SaveChangesAsync();
 
@@ -113,13 +113,13 @@ namespace User.Application.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteClientAsync_ShouldRemoveClientAndAddress()
+        public async Task DeleteClientAsync_ShouldRemoveClientButNotAddress()
         {
             // Arrange
             var dbContext = await GetDataContext();
             var testUser = new Domain.Models.Entities.User { Id = 1, Username = "testuser", Email = "test@test.com", PasswordHash = "hash" };
             dbContext.Users.Add(testUser);
-            var client = new Client { Id = 1, Name = "ClientToDelete", User = testUser, UserId = 1, Address = new Address() };
+            var client = new Client { Id = 1, Name = "ClientToDelete", User = testUser, UserId = 1, Address = new Address(), NIP = "", PhoneNumber = "" };
             dbContext.Clients.Add(client);
             await dbContext.SaveChangesAsync();
 
@@ -131,7 +131,7 @@ namespace User.Application.Tests.Services
             // Assert
             result.Should().BeTrue();
             (await dbContext.Clients.CountAsync()).Should().Be(0);
-            (await dbContext.Addresses.CountAsync()).Should().Be(0); // Because of cascade delete
+            (await dbContext.Addresses.CountAsync()).Should().Be(1); // Address should NOT be deleted
         }
     }
 } 
