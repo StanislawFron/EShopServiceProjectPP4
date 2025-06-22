@@ -3,7 +3,7 @@ using User.Domain.Models.Response;
 
 namespace User.Application.Services
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
         private readonly IMapper _mapper;
         
