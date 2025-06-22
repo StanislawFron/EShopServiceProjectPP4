@@ -41,8 +41,11 @@ if (app.Environment.IsDevelopment())
 // Uruchom migracje
 using (var scope = app.Services.CreateScope())
 {
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("Attempting to apply migrations for ShoppingCart...");
     var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
     await dbContext.Database.MigrateAsync();
+    logger.LogInformation("Migrations for ShoppingCart applied successfully.");
 }
 
 // app.UseHttpsRedirection();
