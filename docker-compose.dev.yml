@@ -15,6 +15,7 @@ services:
     depends_on:
       - db
       - userservice
+    command: ["/wait-for-it.sh", "db:1433", "--", "dotnet", "EShopService.dll"]
 
   userservice:
     build:
@@ -29,6 +30,7 @@ services:
       - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
     depends_on:
       - db
+    command: ["/wait-for-it.sh", "db:1433", "--", "dotnet", "watch", "run", "--no-launch-profile"]
 
   shoppingcartservice:
     build:
@@ -45,6 +47,7 @@ services:
       - db
       - redis
       - kafka
+    command: ["/wait-for-it.sh", "db:1433", "--", "dotnet", "watch", "run", "--no-launch-profile"]
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest

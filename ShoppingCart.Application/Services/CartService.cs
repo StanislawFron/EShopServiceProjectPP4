@@ -1,6 +1,5 @@
 ﻿using ShoppingCart.Domain.Interfaces;
 using ShoppingCart.Domain.Models;
-using ShoppingCart.Infrastructure.Repositories;
 
 namespace ShoppingCart.Application.Services
 {
@@ -13,12 +12,12 @@ namespace ShoppingCart.Application.Services
             _repository = repository;
         }
 
-        public void AddProductToCart(int cartId, int productId)
+        public void AddProductToCart(int cartId, int productId, int quantity)
         {
             var cart = _repository.FindById(cartId);
             if (cart == null)
             {
-                cart = new Cart { Id = cartId, UserId = Guid.NewGuid() }; // Tymczasowo, UserId powinien przychodzić z tokenu JWT
+                cart = new Cart { Id = cartId, UserId = 0 }; // Tymczasowo, UserId powinien przychodzić z tokenu JWT
                 _repository.Add(cart);
             }
 
@@ -26,11 +25,11 @@ namespace ShoppingCart.Application.Services
 
             if (cartItem == null)
             {
-                cart.Items.Add(new CartItem { ProductId = productId, Quantity = 1 });
+                cart.Items.Add(new CartItem { ProductId = productId, Quantity = quantity });
             }
             else
             {
-                cartItem.Quantity++;
+                cartItem.Quantity += quantity;
             }
             _repository.Update(cart);
         }

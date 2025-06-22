@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Domain.Commands;
 using ShoppingCart.Domain.Queries;
+using ShoppingCart.Domain.Models;
+using ShoppingCart.Domain.Repositories;
 
 namespace ShoppingCart.Controllers
 {
@@ -10,15 +12,19 @@ namespace ShoppingCart.Controllers
     public class CartController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly DataContext _context;
 
-        public CartController(IMediator mediator)
+        public CartController(IMediator mediator, DataContext context)
         {
             _mediator = mediator;
+            _context = context;
         }
 
         [HttpPost("add-product")]
         public async Task<IActionResult> AddProductToCart([FromBody] AddProductToCartCommand command)
         {
+            if (command.CartId <= 0 || command.ProductId <= 0 || command.Quantity <= 0)
+                return BadRequest("cart_id, product_id i quantity są wymagane i muszą być większe od 0");
             await _mediator.Send(command);
             return Ok();
         }

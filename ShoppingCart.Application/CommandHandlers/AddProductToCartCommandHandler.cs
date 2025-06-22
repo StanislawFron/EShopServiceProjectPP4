@@ -15,7 +15,7 @@ namespace ShoppingCart.Application.CommandHandlers
 
         public Task Handle(AddProductToCartCommand request, CancellationToken cancellationToken)
         {
-            _cartAdder.AddProductToCart(request.CartId, request.ProductId);
+            _cartAdder.AddProductToCart(request.CartId, request.ProductId, request.Quantity);
             return Task.CompletedTask;
         }
     }

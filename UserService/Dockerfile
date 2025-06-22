@@ -49,4 +49,6 @@ USER developer
 
 RUN dotnet tool install --global dotnet-watch
 
+COPY wait-for-it.sh /wait-for-it.sh
+
 CMD ["dotnet", "watch", "run", "--no-launch-profile"]

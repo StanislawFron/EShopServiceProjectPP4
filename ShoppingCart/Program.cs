@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Application.Services;
 using ShoppingCart.Domain.Interfaces;
-using ShoppingCart.Infrastructure;
-using ShoppingCart.Infrastructure.Repositories;
+using ShoppingCart.Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +17,7 @@ builder.Services.AddScoped<ICartReader, CartService>();
 
 // Add DbContext
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-builder.Services.AddDbContext<DataContext>(options =>
+builder.Services.AddDbContext<ShoppingCart.Domain.Repositories.DataContext>(options =>
     options.UseSqlServer(connectionString, b =>
     {
         b.MigrationsAssembly("ShoppingCart.Domain");
@@ -41,11 +40,8 @@ if (app.Environment.IsDevelopment())
 // Uruchom migracje
 using (var scope = app.Services.CreateScope())
 {
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Attempting to apply migrations for ShoppingCart...");
-    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ShoppingCart.Domain.Repositories.DataContext>();
     await dbContext.Database.MigrateAsync();
-    logger.LogInformation("Migrations for ShoppingCart applied successfully.");
 }
 
 // app.UseHttpsRedirection();
