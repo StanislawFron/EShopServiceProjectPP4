@@ -47,4 +47,6 @@ USER developer
 # Instalacja narzędzi developerskich
 RUN dotnet tool install --global dotnet-watch
 
+COPY ./data /workspace/data
+
 ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile"]

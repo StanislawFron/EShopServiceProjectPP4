@@ -35,7 +35,7 @@ builder.Services.Configure<JwtSettings>(jwtSettings);
 // .AddJwtBearer(options =>
 // {
 //     var rsa = RSA.Create();
-//     rsa.ImportFromPem(File.ReadAllText("/app/data/public.key"));
+//     rsa.ImportFromPem(File.ReadAllText("/workspace/data/public.key"));
 //     var publicKey = new RsaSecurityKey(rsa);
 
 //     var jwtConfig = jwtSettings.Get<JwtSettings>();
@@ -54,7 +54,9 @@ builder.Services.Configure<JwtSettings>(jwtSettings);
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("Administrator"));
+        policy.RequireRole("Admin"));
+    options.AddPolicy("UserOnly", policy =>
+        policy.RequireRole("Użytkownik"));
 });
 
 builder.Services.AddScoped<ILoginService, LoginService>();

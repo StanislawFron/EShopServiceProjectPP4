@@ -12,7 +12,7 @@ namespace EShop.Domain.Seeders
             {
                 var categories = new List<ProductCategory>
                 {
-                    new ProductCategory { Name = "Laptops" },
+                    new ProductCategory { Name = "Laptops", CreatedBy = 1, UpdatedBy = 1 },
                 };
 
                 context.Categories.AddRange(categories);
@@ -25,9 +25,9 @@ namespace EShop.Domain.Seeders
 
                 var products = new List<Product>
                 {
-                    new Product { Name = "Thinkpad", Price = 10300.12M,Category = category },
-                    new Product { Name = "Dell", Price = 8000.00M ,Category = category },
-                    new Product { Name = "Acer", Price = 4500.99M ,Category = category }
+                    new Product { Name = "Thinkpad", Price = 10300.12M, Category = category, CreatedBy = 1, UpdatedBy = 1 },
+                    new Product { Name = "Dell", Price = 8000.00M, Category = category, CreatedBy = 1, UpdatedBy = 1 },
+                    new Product { Name = "Acer", Price = 4500.99M, Category = category, CreatedBy = 1, UpdatedBy = 1 }
                 };
 
                 context.Products.AddRange(products);

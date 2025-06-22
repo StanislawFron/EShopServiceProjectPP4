@@ -1,5 +1,4 @@
 using EShop.Application.Service;
-using EShop.Application.Services;
 using EShop.Domain.Repositories;
 using EShop.Domain.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,7 +25,6 @@ namespace EShopService
 
             builder.Services.AddScoped<IRepository, Repository>();
 
-            builder.Services.AddScoped<ICreditCardService, CreditCardService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
@@ -76,7 +74,7 @@ namespace EShopService
             // .AddJwtBearer(options =>
             // {
             //     var rsa = RSA.Create();
-            //     rsa.ImportFromPem(File.ReadAllText("/app/data/public.key"));
+            //     rsa.ImportFromPem(File.ReadAllText("/workspace/data/public.key"));
             //     var publicKey = new RsaSecurityKey(rsa);
 
             //     options.TokenValidationParameters = new TokenValidationParameters

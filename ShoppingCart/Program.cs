@@ -1,19 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Application.Services;
-using ShoppingCart.Domain.Interfaces;
 using ShoppingCart.Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ShoppingCart.Application.Services.CartService).Assembly));
 
 // Register dependencies (DIP)
-builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddScoped<ICartAdder, CartService>();
-builder.Services.AddScoped<ICartRemover, CartService>();
-builder.Services.AddScoped<ICartReader, CartService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 // Add DbContext
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
