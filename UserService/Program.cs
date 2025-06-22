@@ -58,6 +58,7 @@ builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IUserService, User.Application.Services.UserService>();
 builder.Services.AddScoped<IKafkaProducer, KafkaProducer>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IClientSeeder, ClientSeeder>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -114,6 +115,12 @@ if (app.Environment.IsDevelopment())
 // app.UseAuthentication();
 // app.UseAuthorization();
 
+// Uruchom seeder klientów
+using (var scope = app.Services.CreateScope())
+{
+    var clientSeeder = scope.ServiceProvider.GetRequiredService<IClientSeeder>();
+    await clientSeeder.SeedClientsAsync();
+}
 
 app.MapControllers();
 
