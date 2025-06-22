@@ -36,7 +36,10 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ShoppingCart.Domain.Repositories.DataContext>();
-    await dbContext.Database.MigrateAsync();
+    if(dbContext.Database.IsRelational())
+    {
+        await dbContext.Database.MigrateAsync();
+    }
 }
 
 // app.UseHttpsRedirection();
@@ -46,3 +49,5 @@ using (var scope = app.Services.CreateScope())
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
