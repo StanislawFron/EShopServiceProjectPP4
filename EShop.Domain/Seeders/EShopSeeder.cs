@@ -10,9 +10,9 @@ namespace EShop.Domain.Seeders
         {
             if (!context.Categories.Any())
             {
-                var categories = new List<Category>
+                var categories = new List<ProductCategory>
                 {
-                    new Category { Name = "Laptops" },
+                    new ProductCategory { Name = "Laptops" },
                 };
 
                 context.Categories.AddRange(categories);
