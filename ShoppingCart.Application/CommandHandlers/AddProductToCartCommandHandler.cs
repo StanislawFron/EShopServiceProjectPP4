@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using ShoppingCart.Domain.Commands;
 using ShoppingCart.Domain.Interfaces;
-using ShoppingCart.Domain.Models;
 
 namespace ShoppingCart.Application.CommandHandlers
 {
@@ -14,13 +13,9 @@ namespace ShoppingCart.Application.CommandHandlers
             _cartAdder = cartAdder;
         }
 
-        public Task Handle(AddProductToCartCommand command, CancellationToken cancellationToken)
+        public Task Handle(AddProductToCartCommand request, CancellationToken cancellationToken)
         {
-            var product = new Product
-            {
-                Id = command.ProductId
-            };
-            _cartAdder.AddProductToCart(command.CartId, product);
+            _cartAdder.AddProductToCart(request.CartId, request.ProductId, request.Quantity);
             return Task.CompletedTask;
         }
     }

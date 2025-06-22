@@ -33,6 +33,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS development
 USER root
 RUN apt-get update && apt-get install -y curl
 
+# Instalacja narzędzia dotnet-ef
+RUN dotnet tool install --global dotnet-ef --version 8.0.14
+
 ARG USER_UID=1000
 ARG USER_GID=1000
 RUN groupadd -g $USER_GID developer && \
@@ -46,5 +49,7 @@ WORKDIR /workspace/ShoppingCart
 USER developer
 
 RUN dotnet tool install --global dotnet-watch
+
+COPY wait-for-it.sh /wait-for-it.sh
 
 CMD ["dotnet", "watch", "run", "--no-launch-profile"]
