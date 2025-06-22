@@ -16,7 +16,11 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
 builder.Services.AddDbContext<User.Domain.Repositories.DataContext>(options =>
-    options.UseSqlServer(connectionString, b => b.MigrationsAssembly("User.Domain")));
+    options.UseSqlServer(connectionString, b =>
+    {
+        b.MigrationsAssembly("User.Domain");
+        b.MigrationsHistoryTable("__EFMigrationsHistory_User");
+    }));
 
 // builder.Services.AddScoped<IRepository, Repository>();
 // JWT config
@@ -115,9 +119,12 @@ if (app.Environment.IsDevelopment())
 // app.UseAuthentication();
 // app.UseAuthorization();
 
-// Uruchom seeder klientów
+// Uruchom migracje i seeder
 using (var scope = app.Services.CreateScope())
 {
+    var dbContext = scope.ServiceProvider.GetRequiredService<User.Domain.Repositories.DataContext>();
+    await dbContext.Database.MigrateAsync();
+
     var clientSeeder = scope.ServiceProvider.GetRequiredService<IClientSeeder>();
     await clientSeeder.SeedClientsAsync();
 }
