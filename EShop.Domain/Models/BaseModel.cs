@@ -6,10 +6,10 @@
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Guid CreatedBy { get; set; }
+        public int CreatedBy { get; set; }
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        public Guid UpdatedBy { get; set; }
+        public int UpdatedBy { get; set; }
     }
 }

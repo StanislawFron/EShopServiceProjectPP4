@@ -20,27 +20,29 @@ namespace User.Application.Services
 
         public string GenerateToken(int userId, List<string> roles)
         {
-            // var claims = new List<Claim>
-            // {
-            //     new Claim(ClaimTypes.NameIdentifier, userId.ToString())
-            // };
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, userId.ToString())
+    };
 
-            // claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            // var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
-            // var rsa = RSA.Create();
-            // rsa.ImportFromPem(File.ReadAllText("/app/data/private.key")); // Załaduj klucz prywatny RSA
-            // var creds = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+            var rsa = RSA.Create();
 
-            // var token = new JwtSecurityToken(
-            //     issuer: _settings.Issuer,
-            //     audience: _settings.Audience,
-            //     claims: claims,
-            //     expires: DateTime.UtcNow.AddMinutes(_settings.ExpiresInMinutes),
-            //     signingCredentials: creds);
+            // Załaduj klucz prywatny z pliku PEM
+            rsa.ImportFromPem(File.ReadAllText("/app/data/private.key"));
 
-            // return new JwtSecurityTokenHandler().WriteToken(token);
-            return null;
+            var creds = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _settings.Issuer,
+                audience: _settings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_settings.ExpiresInMinutes),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

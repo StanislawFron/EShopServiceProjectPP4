@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using User.Application.Services;
+using User.Domain.Models.Requests;
 using User.Domain.Models.Response;
 
 namespace UserService.Controllers
@@ -32,6 +34,22 @@ namespace UserService.Controllers
                 return NotFound();
             }
 
+        }
+
+
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            try
+            {
+                var token = await _userService.RegisterAsync(request);
+                return Ok(new { token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }

@@ -22,12 +22,7 @@ namespace EShopService
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
-               
 
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null
-                )
-            ), ServiceLifetime.Transient);
             builder.Services.AddScoped<IRepository, Repository>();
 
             builder.Services.AddScoped<ICreditCardService, CreditCardService>();
@@ -72,28 +67,7 @@ namespace EShopService
 
 
 
-            // builder.Services.AddAuthentication(options =>
-            // {
-            //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            // })
-            // .AddJwtBearer(options =>
-            // {
-            //     var rsa = RSA.Create();
-            //     rsa.ImportFromPem(File.ReadAllText("/app/data/public.key"));
-            //     var publicKey = new RsaSecurityKey(rsa);
-
-            //     options.TokenValidationParameters = new TokenValidationParameters
-            //     {
-            //         ValidateIssuer = true,
-            //         ValidateAudience = true,
-            //         ValidateLifetime = true,
-            //         ValidateIssuerSigningKey = true,
-            //         ValidIssuer = "EShopNetCourse",
-            //         ValidAudience = "Eshop",
-            //         IssuerSigningKey = publicKey
-            //     };
-            // });
+            
 
 
             builder.Services.AddScoped<IEShopSeeder, EShopSeeder>();
