@@ -22,14 +22,9 @@ namespace EShopService
 
             //builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
             builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(
-                    connectionString,
-                    sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null
-                )
-            ), ServiceLifetime.Transient);
+                options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+
+
             builder.Services.AddScoped<IRepository, Repository>();
 
 
@@ -132,7 +127,7 @@ namespace EShopService
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-               // await db.Database.MigrateAsync();
+                await db.Database.MigrateAsync();
                 var seeder = scope.ServiceProvider.GetRequiredService<IEShopSeeder>();
                 await seeder.Seed();
             }
